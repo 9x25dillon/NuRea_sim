@@ -1,0 +1,15 @@
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "poly-optimizer-client"
+version = "0.1.0"
+description = "Client for Symbolic Polynomial Optimizer service"
+authors = [{ name = "limps-suite" }]
+dependencies = ["requests>=2.31"]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+test = ["pytest"]

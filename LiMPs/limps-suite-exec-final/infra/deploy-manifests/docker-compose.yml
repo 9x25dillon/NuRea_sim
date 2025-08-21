@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  optimizer:
+    image: ${CI_REGISTRY}/limps-suite/core/symbolic-polynomial-svc:${OPTIMIZER_TAG}
+    ports: ["8081:8081"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  motif:
+    image: ${CI_REGISTRY}/limps-suite/services/motif-detection:${MOTIF_TAG}
+    ports: ["8082:8082"]
+
+  al_uls:
+    image: ${CI_REGISTRY}/limps-suite/services/al-uls-orchestrator:${AL_ULS_TAG}
+    environment:
+      OPTIMIZER_URL: http://optimizer:8081
+      MOTIF_URL: http://motif:8082
+    ports: ["8000:8000"]
+
+  backend:
+    image: ${CI_REGISTRY}/limps-suite/apps/choppy-backend:${BACKEND_TAG}
+    environment:
+      AL_ULS_URL: http://al_uls:8000
+    ports: ["9000:9000"]
+
+  frontend:
+    image: ${CI_REGISTRY}/limps-suite/apps/choppy-frontend:${FRONTEND_TAG}
+    ports: ["80:80"]

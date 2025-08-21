@@ -1,0 +1,30 @@
+{
+  "name": "carryon-mvp-desktop",
+  "version": "0.1.0",
+  "description": "CarryOn MVP Desktop Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": ["carryon", "mvp", "ai", "desktop"],
+  "author": "CarryOn Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {},
+  "build": {
+    "appId": "com.carryon.mvp",
+    "productName": "CarryOn MVP",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*"
+    ]
+  }
+} 

@@ -1,0 +1,37 @@
+version: 1
+artifacts_dir: ".kiln/runs"
+
+services:
+  chaos_rag:
+    repo: "."
+    start:
+      cmd: ["julia", "--project=.", "server.jl"]
+      env: {}
+    health:
+      type: http
+      url: "http://localhost:8081/chaos/rag/query"
+      timeout_sec: 60
+      interval_sec: 2
+
+  suno_api:
+    repo: "."
+    start:
+      cmd: ["python", "main.py"]
+      env: { "PYTHONUNBUFFERED": "1" }
+    health:
+      type: http
+      url: "http://localhost:8001/cookies"
+      timeout_sec: 60
+      interval_sec: 2
+
+  desktop_app:
+    repo: "carryon-mvp/apps/desktop-electron"
+    start:
+      cmd: ["npm", "run", "dev"]
+      env: {}
+    health:
+      type: tcp
+      host: "localhost"
+      port: 5173
+      timeout_sec: 60
+      interval_sec: 2

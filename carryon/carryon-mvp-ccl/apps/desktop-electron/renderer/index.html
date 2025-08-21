@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CarryOn MVP</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; background: #f5f5f5; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h3 { margin-top: 0; color: #333; }
+        button { background: #007acc; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #005a9e; }
+        textarea { width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 10px; font-family: inherit; }
+        pre { background: #f8f8f8; padding: 15px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; }
+        input { width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>CarryOn MVP</h1>
+    
+    <section class="card">
+        <h3>Memory Management</h3>
+        <input id="memoryText" placeholder="Enter memory content..." />
+        <button id="addMemory">Add Memory</button>
+        <button id="listMemories">List Memories</button>
+        <pre id="memoryOut">No memories yet.</pre>
+    </section>
+
+    <section class="card">
+        <h3>Soulpack Management</h3>
+        <input id="soulpackPath" placeholder="Path to soulpack JSON..." />
+        <button id="loadSoulpack">Load Soulpack</button>
+        <button id="listSoulpacks">List Soulpacks</button>
+        <pre id="soulpackOut">No soulpacks loaded.</pre>
+    </section>
+
+    <section class="card">
+        <h3>Prime & Query</h3>
+        <input id="queryText" placeholder="Enter your query..." />
+        <button id="prime">Prime Context</button>
+        <button id="query">Query</button>
+        <pre id="queryOut">No query results yet.</pre>
+    </section>
+
+    <section class="card">
+        <h3>Vector Index</h3>
+        <button id="rebuildIndex">Rebuild Index</button>
+        <button id="indexStats">Get Stats</button>
+        <pre id="indexOut">No index operations yet.</pre>
+    </section>
+
+    <section class="card">
+        <h3>Tone check</h3>
+        <textarea id="toneText" rows="6" placeholder="Paste a sample reply to evaluate its tone..."></textarea>
+        <button id="toneEval">Evaluate</button>
+        <pre id="toneOut">No evaluation yet.</pre>
+    </section>
+
+    <section class="card">
+        <h3>Code Analysis (CCL)</h3>
+        <input id="cclPath" placeholder="Path to analyze (relative to project root)..." />
+        <button id="cclAnalyze">Analyze Code</button>
+        <button id="cclQuick">Quick Scan</button>
+        <pre id="cclOut">No CCL analysis yet.</pre>
+    </section>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/v1';
+
+        document.getElementById('addMemory').onclick = async () => {
+            const text = document.getElementById('memoryText').value;
+            if (!text) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/memories`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: text, subject: 'user_input' })
+                });
+                const result = await response.json();
+                document.getElementById('memoryOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('memoryOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('listMemories').onclick = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/memories`);
+                const result = await response.json();
+                document.getElementById('memoryOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('memoryOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('loadSoulpack').onclick = async () => {
+            const path = document.getElementById('soulpackPath').value;
+            if (!path) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/soulpacks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path })
+                });
+                const result = await response.json();
+                document.getElementById('soulpackOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('soulpackOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('listSoulpacks').onclick = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/soulpacks`);
+                const result = await response.json();
+                document.getElementById('soulpackOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('soulpackOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('prime').onclick = async () => {
+            const query = document.getElementById('queryText').value;
+            if (!query) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/prime`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const result = await response.json();
+                document.getElementById('queryOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('queryOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('query').onclick = async () => {
+            const query = document.getElementById('queryText').value;
+            if (!query) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/prime/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const result = await response.json();
+                document.getElementById('queryOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('queryOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('rebuildIndex').onclick = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/embeddings/rebuild`, { method: 'POST' });
+                const result = await response.json();
+                document.getElementById('indexOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('indexOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('indexStats').onclick = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/embeddings/stats`);
+                const result = await response.json();
+                document.getElementById('indexOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('indexOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('toneEval').onclick = async () => {
+            const t = document.getElementById('toneText').value || '';
+            if (!t) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/tone/evaluate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: t })
+                });
+                const result = await response.json();
+                document.getElementById('toneOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('toneOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('cclAnalyze').onclick = async () => {
+            const path = document.getElementById('cclPath').value;
+            if (!path) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/tools/ccl-analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path, samples: 100, seed: 42 })
+                });
+                const result = await response.json();
+                document.getElementById('cclOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('cclOut').textContent = `Error: ${error.message}`;
+            }
+        };
+
+        document.getElementById('cclQuick').onclick = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/tools/ccl-quick`, { method: 'POST' });
+                const result = await response.json();
+                document.getElementById('cclOut').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('cclOut').textContent = `Error: ${error.message}`;
+            }
+        };
+    </script>
+</body>
+</html> 

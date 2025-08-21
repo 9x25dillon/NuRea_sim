@@ -1,0 +1,7 @@
+{
+  "asset": "ETH",
+  "realized_vol": 0.15,
+  "entropy": 0.8,
+  "mod_intensity_grad": 0.05,
+  "router_noise": 0.02
+}

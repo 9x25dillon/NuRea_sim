@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MIXER_DEFAULT_SPLIT=0.5
+      - USE_FAISS=0
+      - DATABASE_URL=sqlite+aiosqlite:///./data/qgi.db
+      - JULIA_SERVER_URL=http://julia:8088
+      - JULIA_WS_URL=ws://julia:8089
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./cache:/app/cache  # Persistent cache volume
+    depends_on:
+      - julia
+
+  julia:
+    build:
+      context: .
+      dockerfile: julia_server/Dockerfile
+    ports:
+      - "8088:8088"  # HTTP
+      - "8089:8089"  # WebSocket

@@ -1,0 +1,16 @@
+[project]
+name = "carryon-mvp"
+version = "0.1.0"
+description = "CarryOn MVP with embeddings and tone alignment"
+dependencies = [
+  "fastapi>=0.104",
+  "uvicorn>=0.24",
+  "sqlmodel>=0.0.14",
+  "pydantic>=2.5",
+  "pytest>=8.2",
+  "scikit-learn>=1.4"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build" 

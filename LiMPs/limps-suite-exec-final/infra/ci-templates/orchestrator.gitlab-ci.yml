@@ -1,0 +1,97 @@
+stages: [prepare, core, services, apps, deploy]
+
+default:
+  interruptible: true
+
+.default_rules: &default_rules
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+
+prepare:
+  stage: prepare
+  image: alpine:3.20
+  script:
+    - echo "Preparing orchestration..."
+  <<: *default_rules
+
+core:limps-matrix-optimizer:
+  stage: core
+  trigger:
+    project: limps-suite/core/limps-matrix-optimizer
+    strategy: depend
+  needs: ["prepare"]
+  <<: *default_rules
+
+core:symbolic-polynomial-svc:
+  stage: core
+  trigger:
+    project: limps-suite/core/symbolic-polynomial-svc
+    strategy: depend
+  needs: ["core:limps-matrix-optimizer"]
+  <<: *default_rules
+
+core:entropy-engine:
+  stage: core
+  trigger:
+    project: limps-suite/core/entropy-engine
+    strategy: depend
+  needs: ["core:limps-matrix-optimizer"]
+  <<: *default_rules
+
+services:motif-detection:
+  stage: services
+  trigger:
+    project: limps-suite/services/motif-detection
+    strategy: depend
+  needs: ["core:limps-matrix-optimizer"]
+  <<: *default_rules
+
+services:poly-optimizer-client:
+  stage: services
+  trigger:
+    project: limps-suite/services/poly-optimizer-client
+    strategy: depend
+  needs: ["core:symbolic-polynomial-svc"]
+  <<: *default_rules
+
+services:al-uls-orchestrator:
+  stage: services
+  trigger:
+    project: limps-suite/services/al-uls-orchestrator
+    strategy: depend
+  needs: ["core:entropy-engine", "core:symbolic-polynomial-svc"]
+  <<: *default_rules
+
+apps:choppy-backend:
+  stage: apps
+  trigger:
+    project: limps-suite/apps/choppy-backend
+    strategy: depend
+  needs: ["services:al-uls-orchestrator", "services:motif-detection"]
+  <<: *default_rules
+
+apps:choppy-frontend:
+  stage: apps
+  trigger:
+    project: limps-suite/apps/choppy-frontend
+    strategy: depend
+  needs: ["apps:choppy-backend"]
+  <<: *default_rules
+
+deploy:staging:
+  stage: deploy
+  image: alpine:3.20
+  variables:
+    OPTIMIZER_TAG: "$OPTIMIZER_TAG"
+    MOTIF_TAG: "$MOTIF_TAG"
+    AL_ULS_TAG: "$AL_ULS_TAG"
+    BACKEND_TAG: "$BACKEND_TAG"
+    FRONTEND_TAG: "$FRONTEND_TAG"
+  script:
+    - ./infra/deploy-manifests/scripts/deploy.sh staging
+  needs: ["apps:choppy-frontend"]
+  environment:
+    name: staging
+    url: ${STAGING_URL}
+  <<: *default_rules

@@ -1,0 +1,21 @@
+FROM julia:1.10
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Julia files
+COPY server.jl .
+COPY Project.toml .
+COPY Manifest.toml .
+
+# Install Julia dependencies
+RUN julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+
+EXPOSE 8081
+
+CMD ["julia", "--project=.", "server.jl"]

@@ -1,0 +1,14 @@
+[
+  {
+    "event_id": "evt_0001",
+    "ts": "2025-08-10T19:21:00Z",
+    "type": "USER_PREF_SET",
+    "subject": "Randy",
+    "data": "{\"calls_me\":\"Diane\"}",
+    "sensitivity": "low",
+    "consent": "retain",
+    "hash": "abc123",
+    "recency_score": 0.9,
+    "graph_degree": 0.1
+  }
+]

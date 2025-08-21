@@ -1,0 +1,90 @@
+name: kiln-stack
+services:
+  chaos-rag:
+    build:
+      context: .
+      dockerfile: Dockerfile.julia
+    ports: ["8081:8081"]
+    environment:
+      - DATABASE_URL=postgres://user:pass@postgres:5432/chaos
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/chaos/rag/query"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  suno-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    ports: ["8001:8000"]
+    environment:
+      - BASE_URL=https://studio-api.suno.ai
+      - SESSION_ID=cookie
+      - USER_NAME=root
+      - SQL_NAME=suno2api
+      - SQL_PASSWORD=password
+      - SQL_IP=postgres
+      - SQL_DK=5432
+      - COOKIES_PREFIX=
+      - AUTH_KEY=your_auth_key_here
+      - RETRIES=5
+      - BATCH_SIZE=10
+      - MAX_TIME=5
+      - TZ=Asia/Shanghai
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/cookies"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  desktop-app:
+    build:
+      context: carryon-mvp/apps/desktop-electron
+      dockerfile: Dockerfile
+    ports: ["5173:5173"]
+    healthcheck:
+      test: ["CMD", "bash", "-lc", "</dev/tcp/localhost/5173"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: chaos
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports: ["5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d chaos"]
+      interval: 5s
+      timeout: 2s
+      retries: 12
+
+  kiln:
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby
+    volumes:
+      - ./:/app
+      - ./carryon-mvp:/carryon-mvp
+    depends_on:
+      chaos-rag:
+        condition: service_healthy
+      suno-api:
+        condition: service_healthy
+      desktop-app:
+        condition: service_started
+    entrypoint: ["/bin/sh", "-lc", "sleep infinity"]
+
+volumes:
+  postgres_data:

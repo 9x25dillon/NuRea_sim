@@ -1,0 +1,19 @@
+{
+  "core": {
+    "9xdSq-LIMPS-FemTO-R1C": "limps-suite/core/limps-matrix-optimizer",
+    "symbolic-polynomial-server": "limps-suite/core/symbolic-polynomial-svc",
+    "entropy-engine": "limps-suite/core/entropy-engine"
+  },
+  "services": {
+    "LiMp": "limps-suite/services/al-uls-orchestrator",
+    "motif-detection": "limps-suite/services/motif-detection",
+    "poly-optimizer-client": "limps-suite/services/poly-optimizer-client"
+  },
+  "apps": {
+    "Choppy-Backend": "limps-suite/apps/choppy-backend",
+    "Choppy-Frontend": "limps-suite/apps/choppy-frontend"
+  },
+  "infra": {
+    "limps-infra": "limps-suite/infra"
+  }
+}

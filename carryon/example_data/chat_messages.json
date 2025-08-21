@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate a jazz melody in the style of Miles Davis"
+    }
+  ]
+}
