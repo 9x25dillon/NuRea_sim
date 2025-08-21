@@ -1,0 +1,2 @@
+*.csv filter=lfs diff=lfs merge=lfs -text
+lattice-physics*/raw_augmented.csv filter=lfs diff=lfs merge=lfs -text
