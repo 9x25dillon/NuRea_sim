@@ -125,9 +125,13 @@ function optimize_handler(req)
     end
 end
 
-# Health check endpoint
+# Health check endpoints
 function health_handler(req)
     return HTTP.Response(200, "{\"status\":\"healthy\",\"backend\":\"julia\"}")
+end
+
+function healthz_handler(req)
+    return HTTP.Response(200, "ok")
 end
 
 # Router setup
@@ -136,6 +140,8 @@ function router(req)
         return optimize_handler(req)
     elseif req.method == "GET" && req.target == "/health"
         return health_handler(req)
+    elseif req.method == "GET" && req.target == "/healthz"
+        return healthz_handler(req)
     else
         return HTTP.Response(404, "{\"error\":\"not found\"}")
     end
@@ -146,9 +152,10 @@ function main()
     println("Starting Julia optimization server on port 9000...")
     println("Available methods: sparsity, rank, structure")
     println("Health check: GET /health")
+    println("Health check (Docker): GET /healthz")
     println("Optimize: POST /optimize")
     
-    HTTP.serve(router, "127.0.0.1", 9000)
+    HTTP.serve(router, "0.0.0.0", 9000)
 end
 
 # Run if called directly
