@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NuRea IDE</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./ai.css" />
+  <link rel="stylesheet" href="../node_modules/xterm/css/xterm.css" />
+  <script>
+    // Monaco AMD loader path
+    window.require = { paths: { 'vs': '../node_modules/monaco-editor/min/vs' } };
+  </script>
+  <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+  <script src="../node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+  <script src="../node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
+  <script src="../node_modules/xterm/lib/xterm.js"></script>
+  <script src="../node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="section">
+        <div class="section-title">Workspace</div>
+        <div id="workspace-path"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Files</div>
+        <ul id="file-list"></ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Actions</div>
+        <button id="btn-backend-up">Start Julia Backend</button>
+        <button id="btn-backend-down">Stop Julia Backend</button>
+        <button id="btn-run-plan">Run Plan</button>
+      </div>
+      <div class="section">
+        <div class="section-title">Backend Health</div>
+        <div id="health">unknown</div>
+      </div>
+      <div class="section">
+        <div class="section-title">Search</div>
+        <input id="search-input" placeholder="text or /regex/" />
+        <button id="search-btn">Search</button>
+        <ul id="search-results"></ul>
+      </div>
+    </aside>
+
+    <div id="editor-pane">
+      <div id="tabs">
+        <div id="tabbar"></div>
+        <div id="toolbar">
+          <button id="save">Save</button>
+          <button id="ai-refactor">AI Refactor</button>
+          <button id="ai-explain">AI Explain</button>
+          <button id="ai-test">AI Tests</button>
+          <button id="diff-toggle">Diff</button>
+        </div>
+      </div>
+      <div id="editors">
+        <div id="monaco" class="pane"></div>
+        <div id="diff" class="pane" style="display:none;"></div>
+      </div>
+      <div id="bottom">
+        <div id="terminal" class="xterm"></div>
+      </div>
+    </div>
+
+    <aside id="chat">
+      <div class="chat-header">AI Assistant</div>
+      <div id="chat-log"></div>
+      <div id="chat-controls">
+        <textarea id="chat-input" placeholder="Ask about the open file, selection, or repo…"></textarea>
+        <button id="chat-send">Send</button>
+      </div>
+    </aside>
+  </div>
+  <script src="./index.js"></script>
+</body>
+</html>

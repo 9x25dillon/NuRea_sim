@@ -1,0 +1,5 @@
+.msg{ margin:8px 0; padding:8px 10px; border-radius:10px; max-width:92%; line-height:1.4; white-space:pre-wrap; }
+.msg.user{ background:#1a2336; align-self:flex-end; margin-left:auto; }
+.msg.ai{ background:#141b2c; border:1px solid #1f2a44; }
+.msg.system{ color:#9aa0a6; font-size:12px; }
+.code{ background:#0b111a; border:1px solid #162133; border-radius:6px; padding:4px 6px; display:block; overflow:auto; }

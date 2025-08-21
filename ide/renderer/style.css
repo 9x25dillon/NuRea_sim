@@ -1,0 +1,34 @@
+:root{ --bg:#0b0e14; --fg:#e6e6e6; --muted:#9aa0a6; --acc:#7aa2f7; --panel:#11151c; --border:#1f2430; }
+*{ box-sizing:border-box; }
+html,body,#app{ height:100%; }
+body{ margin:0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:var(--bg); color:var(--fg); }
+#app{ display:grid; grid-template-columns: 320px 1fr 360px; grid-template-rows: 100%; height:100vh; }
+#sidebar{ background:var(--panel); border-right:1px solid var(--border); overflow:auto; padding:12px; }
+.section{ margin-bottom:16px; }
+.section-title{ font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+#file-list, #search-results{ list-style:none; padding:0; margin:0; max-height:30vh; overflow:auto; }
+#file-list li, #search-results li{ padding:6px 8px; border-radius:6px; cursor:pointer; }
+#file-list li:hover, #search-results li:hover{ background:#151a22; }
+#file-list li .dir{ color:var(--acc); }
+
+#editor-pane{ display:grid; grid-template-rows: auto 1fr 220px; }
+#tabs{ display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:8px 12px; }
+#tabbar{ display:flex; gap:8px; align-items:center; overflow:auto; }
+.tab{ padding:4px 8px; background:#1a2030; border:1px solid var(--border); border-radius:8px; cursor:pointer; }
+.tab.active{ background:#232a3a; color:#fff; border-color:#2c3344; }
+#toolbar button{ margin-left:6px; }
+#editors{ position:relative; }
+#monaco, #diff{ position:absolute; inset:0; }
+#bottom{ border-top:1px solid var(--border); background:#0d1117; }
+#terminal{ height:100%; width:100%; }
+
+#chat{ border-left:1px solid var(--border); background:#0f1320; display:flex; flex-direction:column; }
+.chat-header{ padding:10px 12px; border-bottom:1px solid var(--border); color:var(--muted); text-transform:uppercase; font-size:12px; letter-spacing:1px; }
+#chat-log{ flex:1; overflow:auto; padding:12px; }
+#chat-controls{ border-top:1px solid var(--border); padding:8px; display:flex; flex-direction:column; gap:8px; }
+#chat-input{ height:90px; resize:vertical; background:#0d1117; color:#e6e6e6; border:1px solid var(--border); border-radius:8px; padding:8px; }
+#chat-send{ align-self:flex-end; }
+
+button{ background:#1d2330; border:1px solid var(--border); color:var(--fg); padding:6px 10px; border-radius:8px; cursor:pointer; }
+button:hover{ background:#232a3a; }
+#health{ color:var(--muted); }
