@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json.schemastore.org/pyrightconfig.json",
+  "typeCheckingMode": "basic",
+  "venv": ".venv",
+  "venvPath": ".",
+  "reportMissingTypeStubs": "none",
+
+  "exclude": [
+    "**/.git",
+    "**/.hg",
+    "**/.svn",
+    "**/.venv",
+    "**/venv",
+    "**/__pycache__",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/.ipynb_checkpoints",
+
+    "runs",
+    "wandb",
+    "data",
+    "datasets",
+    "outputs",
+    "logs",
+    "checkpoints",
+    "artifacts",
+    "node_modules"
+  ],
+
+  "ignore": [
+    "runs/**",
+    "wandb/**",
+    "data/**",
+    "datasets/**",
+    "outputs/**",
+    "logs/**",
+    "checkpoints/**",
+    "artifacts/**"
+  ],
+
+  "executionEnvironments": [
+    { "root": ".", "extraPaths": [] }
+  ]
+}

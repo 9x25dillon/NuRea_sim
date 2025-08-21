@@ -1,0 +1,3 @@
+PYTHONPATH=C:\Users\k1ll0\HRM
+MATRIX_BACKEND=mock
+# MATRIX_JULIA_URL=http://localhost:9000   # only if you run the Julia service later

@@ -1,11 +1,26 @@
+# Core ML (CPU)
 torch
-adam-atan2
+torchvision
+torchaudio
+
+# Essentials
+numpy
+httpx
+pydantic
+pydantic-settings
 einops
 tqdm
-coolname
-pydantic
-argdantic
-wandb
-omegaconf
+
+# Optional / common
 hydra-core
+omegaconf
 huggingface_hub
+transformers
+datasets
+wandb
+
+# Dev
+black
+flake8
+pytest
+jupyter

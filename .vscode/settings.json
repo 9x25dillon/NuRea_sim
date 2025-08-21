@@ -1,3 +1,61 @@
 {
-    "python.analysis.typeCheckingMode": "standard"
+    "python.analysis.typeCheckingMode": "standard",
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.envFile": "${workspaceFolder}\\.env",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/models",
+        "${workspaceFolder}/utils",
+        "${workspaceFolder}/dataset"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "python.sortImports.args": ["--profile", "black"],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "python.env": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
+    
+    "files.watcherExclude": {
+        "**/.git/**": true,
+        "**/.venv/**": true,
+        "**/venv/**": true,
+        "**/__pycache__/**": true,
+        "**/.ipynb_checkpoints/**": true,
+        "**/runs/**": true,
+        "**/wandb/**": true,
+        "**/data/**": true,
+        "**/datasets/**": true,
+        "**/outputs/**": true,
+        "**/logs/**": true,
+        "**/checkpoints/**": true,
+        "**/artifacts/**": true,
+        "**/node_modules/**": true
+    },
+    "search.exclude": {
+        "**/.venv": true,
+        "**/venv": true,
+        "**/__pycache__": true,
+        "runs": true,
+        "wandb": true,
+        "data": true,
+        "datasets": true,
+        "outputs": true,
+        "logs": true,
+        "checkpoints": true,
+        "artifacts": true,
+        "node_modules": true
+    }
 }

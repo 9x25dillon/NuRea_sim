@@ -1,0 +1,39 @@
+# HRM Project - CPU-Only Requirements
+# Clean requirements file without problematic packages
+
+# Core ML dependencies (CPU versions)
+torch
+torchvision
+torchaudio
+
+# Essential packages
+einops
+tqdm
+pydantic
+pydantic-settings
+argdantic
+
+# Matrix Orchestrator dependencies
+httpx
+numpy
+
+# Experiment tracking and configuration
+wandb
+omegaconf
+hydra-core
+
+# Model and data handling
+huggingface_hub
+transformers
+datasets
+
+# Development and testing
+black
+flake8
+pytest
+jupyter
+
+# Note: This file excludes:
+# - adam-atan2 (problematic package)
+# - CUDA-specific dependencies
+# - Heavy GPU-focused packages

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hrm-project"
+version = "0.1.0"
+description = "HRM + Enhanced Matrix Orchestrator (CPU-friendly)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "httpx",
+  "pydantic>=2",
+  "pydantic-settings>=2",
+  "einops",
+  "tqdm"
+]
+
+# Optional groups so you can do: pip install -e .[ml,dev]
+[project.optional-dependencies]
+ml = ["torch", "torchvision", "torchaudio", "transformers", "datasets", "huggingface_hub"]
+dev = ["black", "flake8", "pytest", "jupyter", "wandb", "hydra-core", "omegaconf"]
+
+# Make a CLI for your orchestrator:
+[project.scripts]
+matrix-orchestrator = "matrix_orchestrator:run_cli"
+
+[tool.setuptools]
+# These are single-file modules at the repo root
+py-modules = ["matrix_orchestrator", "hrm_matrix_integration"]
+
+[tool.setuptools.packages.find]
+# Pick up your packages (e.g., models/hrm) once we add __init__.py files
+where = ["."]
+include = ["models*"]

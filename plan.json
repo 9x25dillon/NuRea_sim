@@ -1,0 +1,10 @@
+{
+  "run_id": "demo_run",
+  "chunks": [
+    {"id": "a", "data": [[1,2],[3,4]], "meta": {}},
+    {"id": "b", "data": [[0.1,0.2],[0.3,0.4]], "meta": {}}
+  ],
+  "poly": {"degree": 3, "basis": "chebyshev"},
+  "optimize": {"matrix": [[1,0],[0,1]], "method": "sparsity", "params": {}},
+  "export_path": "results.json"
+}
