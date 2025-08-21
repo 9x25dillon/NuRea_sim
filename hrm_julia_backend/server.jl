@@ -1,161 +1,70 @@
-using HTTP
-using JSON3
-using JuMP
-using OSQP
-using Convex
-using SCS
-using LinearAlgebra
-using SparseArrays
+# NuRea Julia Backend Server
+# Packages are pre-installed in Docker build
 
-# Existing sparsity solver
-function opt_sparsity(A::Matrix{Float64}; λ::Float64=1.0)
-    n, m = size(A)
-    model = Model(optimizer_with_attributes(OSQP.Optimizer, "verbose" => false))
-    
-    @variable(model, X[1:n, 1:m])
-    @objective(model, Min, (λ/2) * sum((X[i,j] - A[i,j])^2 for i=1:n, j=1:m) + sum(abs(X[i,j]) for i=1:n, j=1:m))
-    
-    optimize!(model)
-    X̂ = value.(X)
-    obj = objective_value(model)
-    iters = MOI.get(model, MOI.IterationCount())
-    return (objective = obj, matrix_opt = X̂, iterations = iters)
-end
+using HTTP, JSON3, Statistics, LinearAlgebra
 
-# Nuclear-norm "rank" solver (Convex.jl + SCS)
-function opt_rank_nuclear(A::Matrix{Float64}; τ::Float64=1.0, λ::Float64=1.0, maxiters::Int=10_000)
-    n, m = size(A)
-    X = Convex.Variable(n, m)
-    problem = minimize( τ * nuclearnorm(X) + (λ/2) * sumsquares(X - A) )
-    Convex.solve!(problem, SCS.Optimizer; silent_solver = true, max_iters = maxiters)
-    X̂ = evaluate(X)
-    obj = problem.optval
-    iters = problem.solver_result.info[:iter]  # SCS iteration count
-    return (objective = obj, matrix_opt = X̂, iterations = iters)
-end
-
-# Build symmetric graph Laplacian from (possibly directed) adjacency
-function laplacian_from_adj(A::AbstractMatrix{<:Real})
-    A = Array{Float64}(A)
-    A .= max.(A, 0.0)               # no negative edges
-    @inbounds for i in 1:size(A,1)  # zero self-loops
-        A[i,i] = 0.0
+# Simple matrix optimization functions
+function optimize_matrix(M::Vector{Vector{Float64}}; sparsity::Float64=0.0)
+    M2 = [row .* 0.95 for row in M] # demo projection
+    if sparsity <= 0
+        return M2
     end
-    A = (A .+ A') ./ 2              # symmetrize
-    d = sum(A, dims=2)
-    L = Diagonal(vec(d)) - A        # L = D - A
-    return sparse(L)
+    
+    allvals = reduce(vcat, M2)
+    n = length(allvals)
+    k = max(1, min(n, round(Int, sparsity * n)))
+    cutoff = sort!(abs.(copy(allvals)))[k]
+    
+    return [map(x -> (abs(x) < cutoff ? 0.0 : x), row) for row in M2]
 end
 
-# Laplacian "structure" solver (JuMP + OSQP)
-"""
-min_X   (λ/2)||X - A||_F^2 + (β/2) * tr(X' * L * X)
-This stays a convex QP if L is PSD (graph Laplacian is PSD).
-"""
-function opt_structured(A::Matrix{Float64}, L::SparseMatrixCSC{Float64,Int};
-                        λ::Float64=1.0, β::Float64=1.0)
-    n, m = size(A)
-    model = Model(optimizer_with_attributes(OSQP.Optimizer, "verbose" => false))
-
-    @variable(model, X[1:n, 1:m])
-
-    # Quadratic objective components:
-    # (λ/2)*||X-A||^2_F = (λ/2) * sum (X - A).^2
-    # (β/2)*tr(X' L X)  = (β/2) * sum_k X[:,k]' * L * X[:,k]
-    @expression(model, recon, (λ/2) * sum((X[i,j] - A[i,j])^2 for i=1:n, j=1:m))
-    @expression(model, smooth, (β/2) * sum( sum( X[p,k]*L[p,q]*X[q,k] for p=1:n, q=1:n ) for k=1:m ))
-    @objective(model, Min, recon + smooth)
-
-    optimize!(model)
-    X̂ = value.(X)
-    obj = objective_value(model)
-    iters = MOI.get(model, MOI.IterationCount())
-    return (objective = obj, matrix_opt = X̂, iterations = iters)
-end
-
-# HTTP handler for optimization requests
-function optimize_handler(req)
-    body = JSON3.read(String(req.body))
-    A = Matrix{Float64}(body["matrix"])
-    method = String(get(body, "method", "sparsity"))
-    params = haskey(body, "params") ? body["params"] : JSON3.Object()
-
-    if method == "sparsity"
-        λ = haskey(params, "lambda") ? Float64(params["lambda"]) : 1.0
-        res = opt_sparsity(A; λ=λ)
-        return HTTP.Response(200, JSON3.write(Dict(
-            "objective"=>res.objective,
-            "matrix_opt"=>res.matrix_opt,
-            "iterations"=>res.iterations,
-            "meta"=>Dict("solver"=>"OSQP","method"=>"sparsity")
-        )))
-
-    elseif method == "rank"
-        τ = haskey(params, "tau") ? Float64(params["tau"]) : 1.0
-        λ = haskey(params, "lambda") ? Float64(params["lambda"]) : 1.0
-        maxiters = haskey(params, "max_iters") ? Int(params["max_iters"]) : 10_000
-        res = opt_rank_nuclear(A; τ=τ, λ=λ, maxiters=maxiters)
-        return HTTP.Response(200, JSON3.write(Dict(
-            "objective"=>res.objective,
-            "matrix_opt"=>res.matrix_opt,
-            "iterations"=>res.iterations,
-            "meta"=>Dict("solver"=>"SCS","method"=>"rank","tau"=>τ,"lambda"=>λ)
-        )))
-
-    elseif method == "structure"
-        if !haskey(body, "adjacency")
-            return HTTP.Response(400, "{\"error\":\"structure requires adjacency\"}")
-        end
-        adj = body["adjacency"]
-        β = haskey(adj, "beta") ? Float64(adj["beta"]) : 1.0
-        adjmat = Matrix{Float64}(adj["adjacency"])
-        L = laplacian_from_adj(adjmat)
-
-        λ = haskey(params, "lambda") ? Float64(params["lambda"]) : 1.0
-        res = opt_structured(A, L; λ=λ, β=β)
-        return HTTP.Response(200, JSON3.write(Dict(
-            "objective"=>res.objective,
-            "matrix_opt"=>res.matrix_opt,
-            "iterations"=>res.iterations,
-            "meta"=>Dict("solver"=>"OSQP","method"=>"structure","beta"=>β,"lambda"=>λ)
-        )))
-
-    else
-        return HTTP.Response(400, "{\"error\":\"method not implemented\"}")
-    end
-end
-
-# Health check endpoints
-function health_handler(req)
-    return HTTP.Response(200, "{\"status\":\"healthy\",\"backend\":\"julia\"}")
-end
-
+# Health check handler
 function healthz_handler(req)
     return HTTP.Response(200, "ok")
 end
 
-# Router setup
-function router(req)
-    if req.method == "POST" && req.target == "/optimize"
-        return optimize_handler(req)
-    elseif req.method == "GET" && req.target == "/health"
-        return health_handler(req)
-    elseif req.method == "GET" && req.target == "/healthz"
-        return healthz_handler(req)
-    else
-        return HTTP.Response(404, "{\"error\":\"not found\"}")
-    end
+# Health check handler (detailed)
+function health_handler(req)
+    return HTTP.Response(200, JSON3.write(Dict("status" => "healthy", "backend" => "julia")))
 end
+
+# Optimization handler
+function optimize_handler(req)
+    body = JSON3.read(String(req.body))
+    M = haskey(body, "matrix") ? [Float64.(r) for r in body["matrix"]] : [randn(10) for _ in 1:10]
+    s = get(body, "sparsity", 0.0)
+    
+    Mopt = optimize_matrix(M; sparsity=Float64(s))
+    
+    resp = Dict(
+        "optimized_matrix" => Mopt,
+        "rows" => length(Mopt),
+        "cols" => length(Mopt[1]),
+        "method" => "simple_projection",
+        "sparsity" => s
+    )
+    
+    return HTTP.Response(200, JSON3.write(resp), ["Content-Type" => "application/json"])
+end
+
+# Router setup
+router = HTTP.Router()
+HTTP.register!(router, "GET", "/healthz", healthz_handler)
+HTTP.register!(router, "GET", "/health", health_handler)
+HTTP.register!(router, "POST", "/optimize", optimize_handler)
 
 # Main server
 function main()
-    println("Starting Julia optimization server on port 9000...")
-    println("Available methods: sparsity, rank, structure")
-    println("Health check: GET /health")
-    println("Health check (Docker): GET /healthz")
-    println("Optimize: POST /optimize")
+    host = get(ENV, "JULIA_HOST", "0.0.0.0")
+    port = parse(Int, get(ENV, "JULIA_PORT", "9000"))
     
-    HTTP.serve(router, "0.0.0.0", 9000)
+    println("NuRea Julia backend listening on $host:$port")
+    println("Available endpoints:")
+    println("  GET  /healthz  - Docker health check")
+    println("  GET  /health   - Detailed health status")
+    println("  POST /optimize - Matrix optimization")
+    
+    HTTP.serve(router, host, port; verbose=false)
 end
 
 # Run if called directly
