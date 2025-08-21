@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  julia-backend:
+    build:
+      context: .
+      dockerfile: backends/julia/Dockerfile
+    environment:
+      JULIA_HOST: "0.0.0.0"
+      JULIA_PORT: "${JULIA_PORT:-9000}"
+      JULIA_NUM_THREADS: "${JULIA_THREADS:-auto}"
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./:/app:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9000/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    restart: unless-stopped
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: orchestrator/Dockerfile
+    depends_on:
+      julia-backend:
+        condition: service_healthy
+    environment:
+      PLAN_PATH: "${PLAN_PATH:-/app/plan.json}"
+      ORCH_LOG_LEVEL: "${ORCH_LOG_LEVEL:-INFO}"
+    command: ["python", "-m", "app.cli", "--plan", "/app/plan.json"]
+    volumes:
+      - ./:/app
+    restart: on-failure
+
+  chaos-rag:
+    build:
+      context: .
+      dockerfile: backends/chaos-rag/Dockerfile
+    environment:
+      DATABASE_URL: "${DATABASE_URL:-postgres://chaos_user:chaos_pass@postgres:5432/chaos}"
+      PORT: "${CHAOS_RAG_PORT:-8081}"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./:/app:ro
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: chaos
+      POSTGRES_USER: chaos_user
+      POSTGRES_PASSWORD: chaos_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backends/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chaos_user -d chaos"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

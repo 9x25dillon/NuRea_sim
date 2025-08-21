@@ -1,10 +1,37 @@
 {
-  "run_id": "demo_run",
-  "chunks": [
-    {"id": "a", "data": [[1,2],[3,4]], "meta": {}},
-    {"id": "b", "data": [[0.1,0.2],[0.3,0.4]], "meta": {}}
+  "version": "1.0",
+  "run_id": "demo-001",
+  "backend": { 
+    "julia_url": "http://julia-backend:9000",
+    "chaos_rag_url": "http://chaos-rag:8081"
+  },
+  "pipeline": [
+    {
+      "op": "load_matrix",
+      "source": "data/matrix.csv",
+      "shape": [64, 64],
+      "seed": 42
+    },
+    {
+      "op": "optimize",
+      "method": "chebyshev_projection",
+      "sparsity": 0.15,
+      "backend": "julia"
+    },
+    {
+      "op": "vectorize",
+      "method": "l2_normalize",
+      "dimensions": 1536,
+      "backend": "chaos_rag"
+    },
+    {
+      "op": "save",
+      "target": "artifacts/optimized_matrix.csv"
+    }
   ],
-  "poly": {"degree": 3, "basis": "chebyshev"},
-  "optimize": {"matrix": [[1,0],[0,1]], "method": "sparsity", "params": {}},
-  "export_path": "results.json"
+  "metadata": {
+    "description": "Demo: Matrix optimization with Julia backend + vectorization via ChaosRAGJulia",
+    "logging": "info",
+    "deterministic": true
+  }
 }
