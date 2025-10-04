@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-green.svg)](https://postgresql.org/)
 
-## 🎯 What This Project Is For
+## What This Project Is For
 
 **Fractal Cascade Simulation (FCS)** is a cutting-edge platform that combines **nuclear physics simulation** with **AI-powered analysis** to solve complex problems in:
 
@@ -17,63 +17,63 @@
 - **Multi-Physics Optimization** using advanced mathematical techniques
 - **Real-time Reactor Monitoring** and predictive analytics
 
-## 🚀 Core Capabilities
+## Core Capabilities
 
-### 🔬 **Nuclear Physics Simulation**
+### **Nuclear Physics Simulation**
 - **Lattice Physics Calculations**: Advanced neutron transport simulations for PWR fuel assemblies
 - **Vector-Augmented Physics**: Combines traditional numerical data with AI-ready vector representations
 - **Temporal Causality Modeling**: Creates explicit time-based relationships between simulation states
 - **Cascade Failure Prediction**: Analyzes how reactor states evolve and cascade over time
 
-### 🤖 **AI-Powered Analysis (ChaosRAGJulia)**
+### **AI-Powered Analysis (ChaosRAGJulia)**
 - **Vector Similarity Search**: Uses PostgreSQL + pgvector for efficient similarity matching
 - **Retrieval-Augmented Generation (RAG)**: Intelligent querying of simulation results
 - **Temporal Graph Construction**: Builds causal relationships between simulation states
 - **Real-time Telemetry Analysis**: Processes live reactor data for immediate insights
 
-### 🧮 **Mathematical Optimization**
+### **Mathematical Optimization**
 - **Matrix Orchestrator**: Python-based pipeline for mathematical operations
 - **Julia Backend**: High-performance optimization algorithms (OSQP, Convex.jl, SCS)
 - **Sparsity Optimization**: L1 regularization for efficient matrix operations
 - **Rank Optimization**: Nuclear norm regularization for dimensionality reduction
 - **Structure Optimization**: Graph Laplacian regularization for spatial relationships
 
-### 🌡️ **Entropy & Information Theory**
+### **Entropy & Information Theory**
 - **Thermodynamic Analysis**: Monitors system stability and energy flow
 - **Information Entropy**: Measures uncertainty and information content in data
 - **Oscillation Detection**: Identifies periodic patterns in reactor behavior
 - **Thermostatic Control**: Adaptive transformations based on entropy levels
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Fractal Cascade Simulation               │
 ├─────────────────────────────────────────────────────────────┤
-│  🌊 Nuclear Physics Engine                                 │
+│   Nuclear Physics Engine                                 │
 │  ├── Lattice Physics Calculations                          │
 │  ├── Neutron Transport Simulation                          │
 │  └── Fuel Assembly Analysis                                │
 ├─────────────────────────────────────────────────────────────┤
-│  🤖 ChaosRAGJulia (AI Backend)                            │
+│   ChaosRAGJulia (AI Backend)                            │
 │  ├── Vector Database (PostgreSQL + pgvector)               │
 │  ├── RAG System for Intelligent Querying                   │
 │  ├── Temporal Graph Construction                           │
 │  └── Real-time Data Ingestion                             │
 ├─────────────────────────────────────────────────────────────┤
-│  🧮 Matrix Optimization Engine                             │
+│   Matrix Optimization Engine                             │
 │  ├── Python Orchestrator                                   │
 │  ├── Julia Backend (OSQP, Convex.jl, SCS)                 │
 │  └── Multi-method Optimization                             │
 ├─────────────────────────────────────────────────────────────┤
-│  🌡️ Entropy Engine                                         │
+│   Entropy Engine                                         │
 │  ├── Thermodynamic Analysis                                │
 │  ├── Information Theory                                    │
 │  └── Adaptive Control Systems                              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🔧 Technology Stack
+##  Technology Stack
 
 ### **Backend Services**
 - **Julia**: High-performance numerical computing and optimization
@@ -93,7 +93,7 @@
 - **CI/CD**: Automated testing and deployment pipelines
 - **Microservices**: Modular architecture for scalability
 
-## 📊 What It Solves
+## What It Solves
 
 ### **Nuclear Engineering Challenges**
 1. **Fuel Assembly Optimization**: Find optimal fuel rod configurations
@@ -113,7 +113,7 @@
 3. **Quality Assurance**: Validate simulation results against known patterns
 4. **Regulatory Compliance**: Document and track simulation methodologies
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 ```bash
@@ -159,7 +159,7 @@ python process_vectors.py
 ./entangle.sh http  # or ./entangle.sh sql
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Fractal_cascade_simulation/
@@ -174,7 +174,7 @@ Fractal_cascade_simulation/
 └── config/                     # Configuration files & settings
 ```
 
-## 🔬 Key Features
+## Key Features
 
 ### **Vector-Augmented Physics**
 - **L2 Normalization**: Standardized vector representations
@@ -194,7 +194,7 @@ Fractal_cascade_simulation/
 - **Predictive Alerts**: Early warning of potential issues
 - **Adaptive Responses**: Dynamic system adjustments
 
-## 🌟 Why This Matters
+## Why This Matters
 
 ### **Nuclear Safety**
 - **Prevent Cascade Failures**: Understand how reactor states evolve
@@ -214,7 +214,7 @@ Fractal_cascade_simulation/
 - **Risk Mitigation**: Proactive identification of potential issues
 - **Knowledge Preservation**: Maintain institutional knowledge
 
-## 🤝 Contributing
+## Contributing
 
 This project welcomes contributions! See our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
@@ -225,13 +225,13 @@ This project welcomes contributions! See our [Contributing Guidelines](CONTRIBUT
 - **Documentation**: Improve user guides and API documentation
 - **Testing**: Expand test coverage and validation
 
-## 📄 License
+## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 **Copyright (c) 2025 9x25dillon**
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Nuclear Engineering Community**: For domain expertise and validation
 - **Julia Language**: For high-performance numerical computing
@@ -240,6 +240,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ---
 
-**🚀 Ready to revolutionize nuclear physics simulation? Start exploring the Fractal Cascade Simulation today!**
+** Ready to revolutionize nuclear physics simulation? Start exploring the Fractal Cascade Simulation today!**
 
 *For questions, support, or collaboration, please open an issue or reach out to the maintainers.*
